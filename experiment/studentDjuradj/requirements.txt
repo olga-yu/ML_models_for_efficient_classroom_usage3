@@ -1,0 +1,8 @@
+joblib==1.2.0
+pandas==1.5.3
+plotly==5.9.0
+streamlit==1.11.1
+streamlit_cookies_manager==0.2.0
+streamlit_option_menu==0.3.2
+
+pymongo~=4.3.3
