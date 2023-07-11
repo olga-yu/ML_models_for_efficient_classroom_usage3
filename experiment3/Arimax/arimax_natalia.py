@@ -11,11 +11,11 @@ def calculate_mape(y_true, y_pred):
 
 testing_set_size = 12
 
+
 # Load and preprocess the training dataset
 dataset_train = pd.read_csv('Processed_Input_Data_FTSE100_1985_21.csv', header=0, index_col=0)
 training_set = dataset_train.iloc[60:, 0:1].values
-
-print(training_set)
+print("training set len")
 
 sc = MinMaxScaler(feature_range=(0, 1))
 training_set_scaled = sc.fit_transform(training_set)
@@ -30,11 +30,10 @@ for i in range(0, (len(training_set) - testing_set_size)):
 X_train, y_train = np.array(X_train), np.array(y_train)
 
 # ARIMAX model configuration
-order = (2, 0, 1)  # ARIMA order
+order = (2, 0, 1)  # ARIMA order # Autoregressive, Differencing, Moving Average orders
 exog = X_train  # exogenous variables
 
-
-
+#create and fit the arimax model
 model = ARIMA(endog=y_train, exog=exog, order=order)
 arimax_pred = model.fit()
 
@@ -43,6 +42,9 @@ dataset_test = pd.read_csv('Processed_Input_Data_FTSE100_1985_21.csv', header=0,
 real_stock_price = dataset_test.iloc[-testing_set_size:, 0:1].values
 print('real_stock_price')
 print(real_stock_price)
+
+print('print dataset Test len')
+print(len(dataset_test))
 
 dataset_total = pd.concat((dataset_train['FTSE100'], dataset_test['FTSE100']), axis=0)
 inputs = dataset_total[len(dataset_total) - len(dataset_test):].values

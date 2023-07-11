@@ -7,6 +7,13 @@ import matplotlib.pyplot as plt
 plt.style.use('fivethirtyeight')
 from pylab import rcParams
 rcParams['figure.figsize'] = 10, 6
+
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.arima_model import ARIMA
@@ -16,9 +23,6 @@ import math
 import numpy as np
 
 
-import numpy as np
-import pandas as pd
-from statsmodels.tsa.arima.model import ARIMA
 from sklearn.preprocessing import MinMaxScaler
 
 # def calculate_mape(y_true, y_pred):
@@ -28,13 +32,24 @@ from sklearn.preprocessing import MinMaxScaler
 #
 # testing_set_size = 3
 
+df = pd.read_csv("data/Train_awoL0xl.csv")
+print(df.head())
+print(df.shape)
 
+df2 = df[df.stock == 0]
+plt.figure(figsize=(10,6))
+plt.grid(True)
+plt.xlabel('Dates')
+plt.ylabel('Close Prices')
+plt.plot(df2['Close'])
+plt.title('Stock #1 closing price')
+plt.show()
 # Load and preprocess the training dataset
-dataset_train = pd.read_csv('../../Data/westminster.csv', header=0, index_col=0)
+#dataset_train = pd.read_csv('../../Data/westminster.csv', header=0, index_col=0)
 # training_set = dataset_train.iloc[3:, 0:1].values
-print(dataset_train.head())
 
-df.shape
+
+
 
 # shows 75% of values and works on "Module_X_Lecture_attendance"
 #
