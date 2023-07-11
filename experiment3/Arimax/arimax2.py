@@ -10,9 +10,11 @@ def calculate_mape(y_true, y_pred):
 
 testing_set_size = 3
 
+
 # Load and preprocess the training dataset
 dataset_train = pd.read_csv('../../Data/westminster.csv', header=0, index_col=0)
 training_set = dataset_train.iloc[3:, 0:1].values
+
 # shows 75% of values and works on "Module_X_Lecture_attendance"
 print(training_set)
 
