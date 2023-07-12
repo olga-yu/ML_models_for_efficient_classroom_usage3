@@ -16,7 +16,7 @@ testing_set_size = 12
 dataset_train = pd.read_csv('Processed_Input_Data_FTSE100_1985_21.csv', header=0, index_col=0)
 training_set = dataset_train.iloc[60:, 0:1].values
 print("training set len")
-
+print(training_set)
 sc = MinMaxScaler(feature_range=(0, 1))
 training_set_scaled = sc.fit_transform(training_set)
 print("training set scaled")
