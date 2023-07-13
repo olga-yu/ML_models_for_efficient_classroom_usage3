@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-
+import pmdarima as pm
 
 from statsmodels.tsa.arima.model import ARIMA
 from sklearn.preprocessing import MinMaxScaler
@@ -23,7 +23,8 @@ testing_set_size = 3
 
 # Load and preprocess the training dataset
 
-dataset_train = pd.read_csv('../../Data/westminster.csv', header=0, index_col=0) # returns first row returns row from which to start and index_col = 0 returns first column
+#dataset_train = pd.read_csv('../../Data/westminster.csv', header=0, index_col=0) # returns first row returns row from which to start and index_col = 0 returns first column
+dataset_train = pd.read_csv('https://raw.githubusercontent.com/wiut-tutor2022/ML_models_for_efficient_classroom_usage3/blob/master/Data/westminster.csv', header=0, index_col=0) # returns first row returns row from which to start and index_col = 0 returns first column
 training_set = dataset_train.iloc[3:, 0:1].values
 #training_set2 = dataset_train.iloc[2:3, 0:3].values # rows to select and column to select
 print("training set")
@@ -47,7 +48,8 @@ for i in range(0, (len(training_set) - testing_set_size)):
 X_train, y_train = np.array(X_train), np.array(y_train)
 
 # ARIMAX model configuration
-order = (2, 0, 1)  # ARIMA order # Autoregressive, Differencing, Moving Average orders , did not understand fully p, d, q values, https://analyticsindiamag.com/quick-way-to-find-p-d-and-q-values-for-arima/
+order = (1, 1, 1)  # ARIMA order # Autoregressive, Differencing, Moving Average orders , did not understand fully p, d, q values, https://analyticsindiamag.com/quick-way-to-find-p-d-and-q-values-for-arima/
+
 
 exog = X_train  # exogenous variables
 
@@ -56,7 +58,8 @@ arimax_pred = model.fit() # Model fitting is a measure of how well a machine lea
 # that on which it was trained. A model that is well-fitted produces more accurate outcomes.
 
 # Load and preprocess the testing dataset (last 12 months)
-dataset_test = pd.read_csv('../../Data/westminster.csv', header=0, index_col=0)
+dataset_test = pd.read_csv('https://raw.githubusercontent.com/wiut-tutor2022/ML_models_for_efficient_classroom_usage3/blob/master/Data/westminster.csv', header=0, index_col=0)
+
 attendance = dataset_test.iloc[-testing_set_size:, 0:1].values
 print('real_attendance')
 print(attendance)
@@ -83,6 +86,88 @@ predicted_attendance = sc.inverse_transform(predicted_attendance.reshape(-1, 1))
 # Calculate MAPE
 mape = calculate_mape(attendance, predicted_attendance)
 print(f'Single Attendance ARIMAX MAPE: {mape:.3f}%')
+
+#to check to find p, d, q values of Arima, based on https://analyticsindiamag.com/quick-way-to-find-p-d-and-q-values-for-arima/
+#finding the P value
+from statsmodels.tsa.stattools import adfuller
+result = adfuller(dataset_train['Module_X_Lecture_attendance'])
+print('ADF Statistic: %f' % result[0])
+print('p-value: %f' % result[1])
+print('Critical Values:')
+for key, value in result[4].items():
+  print('\t%s: %.3f' % (key, value))
+
+print("p-value greater ")
+# # Augmented Dickey–Fuller test:
+# print('Results of Dickey Fuller Test:')
+# dftest = adfuller(dataset_train['Module_X_Lecture_attendance'], autolag='AIC')
+#
+# dfoutput = pd.Series(dftest[0:4], index=['Test Statistic', 'p-value', '#Lags Used', 'Number of Observations Used'])
+# for key, value in dftest[4].items():
+#     dfoutput['Critical Value (%s)' % key] = value
+#
+# print(dfoutput)
+
+
+plt.plot(dataset_train['Module_X_Lecture_attendance'], color='green',  label='Module Lecture attendance')
+plt.show()  #difficult to be judged as stationary or non-stationary as not much data is given. So far data provided
+# gives assumptions for it to be non-stationary thus using
+
+#
+
+#finding d
+
+import numpy as np, pandas as pd
+import matplotlib.pyplot as plt
+
+plt.rcParams.update({'figure.figsize': (9, 7), 'figure.dpi': 120})
+
+# Original Series
+fig, (ax1, ax2, ax3) = plt.subplots(3)
+ax1.plot(dataset_train.Module_X_Lecture_attendance);
+ax1.set_title('Original Series');
+ax1.axes.xaxis.set_visible(False)
+# 1st Differencing
+ax2.plot(dataset_train.Module_X_Lecture_attendance.diff());
+ax2.set_title('1st Order Differencing');
+ax2.axes.xaxis.set_visible(False)
+# 2nd Differencing
+ax3.plot(dataset_train.Module_X_Lecture_attendance.diff().diff());
+ax3.set_title('2nd Order Differencing')
+plt.show()
+
+acf_original = plot_acf(dataset_train)
+
+
+from statsmodels.graphics.tsaplots import plot_acf
+fig, (ax1, ax2, ax3) = plt.subplots(3)
+plot_acf(dataset_train.Module_X_Lecture_attendance, ax=ax1)
+plot_acf(dataset_train.Module_X_Lecture_attendance.diff().dropna(), ax=ax2)
+plot_acf(dataset_train.Module_X_Lecture_attendance.diff().diff().dropna(), ax=ax3)
+
+#
+
+#p value
+# from statsmodels.graphics.tsaplots import plot_pacf
+# plot_pacf(dataset_train.Module_X_Lecture_attendance.diff().dropna())
+# #q value
+# plot_acf(dataset_train.Module_X_Lecture_attendance.diff().dropna())
+#
+# ARIMA_model = pm.auto_arima(dataset_train['Module_X_Lecture_attendance'],
+#                       start_p=1,
+#                       start_q=1,
+#                       test='adf', # use adftest to find optimal 'd'
+#                       max_p=3, max_q=3, # maximum p and q
+#                       m=1, # frequency of series (if m==1, seasonal is set to FALSE automatically)
+#                       d=None,# let model determine 'd'
+#                       seasonal=False, # No Seasonality for standard ARIMA
+#                       trace=False, #logs
+#                       error_action='warn', #shows errors ('ignore' silences these)
+#                       suppress_warnings=True,
+#                       stepwise=True)
+#
+# ARIMA_model.plot_diagnostics(figsize=(3,5))
+# plt.show()
 
 #No graphs and plots, did not understand p, d, q values https://analyticsindiamag.com/quick-way-to-find-p-d-and-q-values-for-arima/
 # fig, (ax1, ax2) = plt.subplots(2,1, figsize=(10,8))

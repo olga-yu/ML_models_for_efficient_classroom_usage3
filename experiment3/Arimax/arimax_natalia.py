@@ -30,7 +30,8 @@ for i in range(0, (len(training_set) - testing_set_size)):
 X_train, y_train = np.array(X_train), np.array(y_train)
 
 # ARIMAX model configuration
-order = (2, 0, 1)  # ARIMA order # Autoregressive, Differencing, Moving Average orders
+order = (2, 0, 1)  # ARIMA order # Autoregressive, Differencing, Moving Average orders Single FTSE100 ARIMAX MAPE: 10.671%
+
 exog = X_train  # exogenous variables
 
 #create and fit the arimax model
