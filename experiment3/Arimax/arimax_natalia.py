@@ -16,7 +16,7 @@ testing_set_size = 12
 dataset_train = pd.read_csv('Processed_Input_Data_FTSE100_1985_21.csv', header=0, index_col=0)
 training_set = dataset_train.iloc[60:, 0:1].values
 print("training set len")
-
+print(training_set)
 sc = MinMaxScaler(feature_range=(0, 1))
 training_set_scaled = sc.fit_transform(training_set)
 print("training set scaled")
@@ -30,7 +30,8 @@ for i in range(0, (len(training_set) - testing_set_size)):
 X_train, y_train = np.array(X_train), np.array(y_train)
 
 # ARIMAX model configuration
-order = (2, 0, 1)  # ARIMA order # Autoregressive, Differencing, Moving Average orders
+order = (2, 0, 1)  # ARIMA order # Autoregressive, Differencing, Moving Average orders Single FTSE100 ARIMAX MAPE: 10.671%
+
 exog = X_train  # exogenous variables
 
 #create and fit the arimax model
