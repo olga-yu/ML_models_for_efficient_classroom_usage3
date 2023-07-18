@@ -15,12 +15,10 @@ testing_set_size = 12
 # Load and preprocess the training dataset
 dataset_train = pd.read_csv('Processed_Input_Data_FTSE100_1985_21.csv', header=0, index_col=0)
 training_set = dataset_train.iloc[60:, 0:1].values
-print("training set len")
-print(training_set)
+
 sc = MinMaxScaler(feature_range=(0, 1))
 training_set_scaled = sc.fit_transform(training_set)
-print("training set scaled")
-print(training_set_scaled)
+
 
 X_train = []
 y_train = []
@@ -41,11 +39,7 @@ arimax_pred = model.fit()
 # Load and preprocess the testing dataset (last 12 months)
 dataset_test = pd.read_csv('Processed_Input_Data_FTSE100_1985_21.csv', header=0, index_col=0)
 real_stock_price = dataset_test.iloc[-testing_set_size:, 0:1].values
-print('real_stock_price')
-print(real_stock_price)
 
-print('print dataset Test len')
-print(len(dataset_test))
 
 dataset_total = pd.concat((dataset_train['FTSE100'], dataset_test['FTSE100']), axis=0)
 inputs = dataset_total[len(dataset_total) - len(dataset_test):].values

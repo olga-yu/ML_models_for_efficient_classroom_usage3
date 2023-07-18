@@ -1,3 +1,5 @@
+# the experiment with Cost of missing attendance
+
 import numpy as np
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
@@ -12,9 +14,8 @@ def calculate_mape(y_true, y_pred):
 
 # Load and preprocess the training dataset
 dataset_train = pd.read_csv('../../Data/westminster.csv', header=0, index_col=0)
-training_set = dataset_train.iloc[3:, 1:2].values # takes 1/3 of attendance from data
+training_set = dataset_train.iloc[2130:, 17:].values #takes 1/3 of attendance from data and column of data
 print(training_set)
-
 sc = MinMaxScaler(feature_range=(0, 1))
 training_set_scaled = sc.fit_transform(training_set)
 
