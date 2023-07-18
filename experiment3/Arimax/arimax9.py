@@ -1,3 +1,5 @@
+# the experiment with Cost of missing attendance
+
 import numpy as np
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
@@ -11,10 +13,8 @@ def calculate_mape(y_true, y_pred):
     return mape
 
 # Load and preprocess the training dataset
-dataset_train = pd.read_csv('../../Data/westminster.csv', header=0, index_col=0)
-training_set = dataset_train.iloc[3:, 1:2].values # takes 1/3 of attendance from data
-print(training_set)
-
+dataset_train = pd.read_csv('../../Data/2017_sem2_attendance_data.csv', header=0, index_col=0)
+training_set = dataset_train.iloc[700:, 17:].values #takes 1/3 of attendance from data and column of data
 sc = MinMaxScaler(feature_range=(0, 1))
 training_set_scaled = sc.fit_transform(training_set)
 
@@ -36,10 +36,10 @@ model = ARIMA(endog=y_train, exog=exog, order=order)
 arimax_pred = model.fit()
 
 # Load and preprocess the testing dataset (last 12 months)
-dataset_test = pd.read_csv('../../Data/westminster.csv', header=0, index_col=0)
+dataset_test = pd.read_csv('../../Data/2017_sem2_attendance_data.csv', header=0, index_col=0)
 attendance = dataset_test.iloc[-testing_set_size:, 0:1].values
 
-dataset_total = pd.concat((dataset_train['Module_X_Lecture_attendance'], dataset_test['Module_X_Lecture_attendance']), axis=0)
+dataset_total = pd.concat((dataset_train['attendance'], dataset_test['attendance']), axis=0)
 inputs = dataset_total[len(dataset_total) - len(dataset_test):].values
 inputs = inputs.reshape(-1, 1)
 inputs = sc.transform(inputs)
@@ -60,7 +60,7 @@ mape = calculate_mape(attendance, predicted_attendance)
 print(f'Single Attendance ARIMAX MAPE: {mape:.3f}%')
 
 # Find p, d, q values of ARIMA
-result = adfuller(dataset_train['Module_X_Lecture_attendance'])
+result = adfuller(dataset_train['attendance'])
 print('ADF Statistic: %f' % result[0])
 print('p-value: %f' % result[1])
 print('Critical Values:')
@@ -74,37 +74,27 @@ plt.rcParams.update({'figure.figsize': (9, 7), 'figure.dpi': 120})
 
 # Original Series
 fig, (ax1, ax2, ax3) = plt.subplots(3)
-ax1.plot(dataset_train['Module_X_Lecture_attendance'])
+ax1.plot(dataset_train['attendance'])
 ax1.set_title('Original Series')
 ax1.axes.xaxis.set_visible(False)
 
 # 1st Differencing
-ax2.plot(dataset_train['Module_X_Lecture_attendance'].diff())
+ax2.plot(dataset_train['attendance'].diff())
 ax2.set_title('1st Order Differencing')
 ax2.axes.xaxis.set_visible(False)
 
 # 2nd Differencing
-ax3.plot(dataset_train['Module_X_Lecture_attendance'].diff().diff())
+ax3.plot(dataset_train['attendance'].diff().diff())
 ax3.set_title('2nd Order Differencing')
 
 plt.show()
 
 # Plotting ACF
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.graphics.tsaplots import plot_acf
 
 fig, (ax1, ax2, ax3) = plt.subplots(3)
-plot_acf(dataset_train['Module_X_Lecture_attendance'], ax=ax1)
-plot_acf(dataset_train['Module_X_Lecture_attendance'].diff().dropna(), ax=ax2)
-plot_acf(dataset_train['Module_X_Lecture_attendance'].diff().diff().dropna(), ax=ax3)
-
-
-
-# Plotting PACF
-from statsmodels.graphics.tsaplots import plot_acf
-#
-# fig, (ax1, ax2, ax3) = plt.subplots(3)
-# plot_pacf(dataset_train['Module_X_Lecture_attendance'], ax=ax1)
-# plot_pacf(dataset_train['Module_X_Lecture_attendance'].diff().dropna(), ax=ax2)
-# plot_pacf(dataset_train['Module_X_Lecture_attendance'].diff().diff().dropna(), ax=ax3)
+plot_acf(dataset_train['attendance'], ax=ax1)
+plot_acf(dataset_train['attendance'].diff().dropna(), ax=ax2)
+plot_acf(dataset_train['attendance'].diff().diff().dropna(), ax=ax3)
 
 plt.show()

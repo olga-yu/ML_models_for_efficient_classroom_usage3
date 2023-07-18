@@ -98,13 +98,9 @@ plot_acf(dataset_train['Module_X_Lecture_attendance'].diff().dropna(), ax=ax2)
 plot_acf(dataset_train['Module_X_Lecture_attendance'].diff().diff().dropna(), ax=ax3)
 
 
-
-# Plotting PACF
-from statsmodels.graphics.tsaplots import plot_acf
-#
-# fig, (ax1, ax2, ax3) = plt.subplots(3)
-# plot_pacf(dataset_train['Module_X_Lecture_attendance'], ax=ax1)
-# plot_pacf(dataset_train['Module_X_Lecture_attendance'].diff().dropna(), ax=ax2)
-# plot_pacf(dataset_train['Module_X_Lecture_attendance'].diff().diff().dropna(), ax=ax3)
+fig, (ax1, ax2, ax3) = plt.subplots(3)
+plot_pacf(dataset_train['Module_X_Lecture_attendance'], ax=ax1)
+plot_pacf(dataset_train['Module_X_Lecture_attendance'].diff().dropna(), ax=ax2)
+plot_pacf(dataset_train['Module_X_Lecture_attendance'].diff().diff().dropna(), ax=ax3)
 
 plt.show()
