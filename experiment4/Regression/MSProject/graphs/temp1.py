@@ -32,6 +32,16 @@ try:
     x_ticks = filtered_data.iloc[::len(filtered_data) // 10]['time']
     plt.xticks(x_ticks, rotation=45)
 
+    # Customize y-axis ticks
+    y_ticks = [i for i in range(filtered_data.min(), filtered_data.max() + 1.0)]
+    y_ticks_with_half = []
+    for tick in y_ticks:
+        y_ticks_with_half.append(tick)
+        y_ticks_with_half.append(tick + 0.5)
+    plt.yticks(y_ticks_with_half)
+
+    plt.tight_layout()  # Adjust layout to prevent clipping of x-axis labels
+
     plt.show()
 
 except FileNotFoundError:
