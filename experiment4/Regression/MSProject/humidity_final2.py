@@ -4,6 +4,9 @@ import matplotlib.dates as mdates  # Import the mdates module
 
 # Read the CSV file
 data = pd.read_csv('../../dataMSProject/data.csv')
+#data = pd.read_csv(
+ #       'https://raw.githubusercontent.com/olga-yu/ML_models_for_efficient_classroom_usage3/master/experiment4/dataMSProject/data.csv')
+#
 
 # Convert the timestamp column to datetime format
 data['time'] = pd.to_datetime(data['time'].str[:-1], format='%Y-%m-%dT%H:%M:%S.%f')
@@ -37,7 +40,7 @@ x_ticks = filtered_data['time'].iloc[::len(filtered_data)//10]  # Adjust the den
 
 plt.xticks(x_ticks, rotation=45)
 
-# x_ticks = filtered_data[filtered_data['time'].dt.minute == 45]['time']  # Selecting hours with minute equal to 0
-# plt.xticks(x_ticks, x_ticks.dt.strftime('%H:%M'), rotation=45)
+#x_ticks = filtered_data[filtered_data['time'].dt.minute == 45]['time']  # Selecting hours with minute equal to 0
+#plt.xticks(x_ticks, x_ticks.dt.strftime('%H:%M'), rotation=45)
 
 plt.show()
