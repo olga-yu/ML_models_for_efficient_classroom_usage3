@@ -9,8 +9,7 @@ from sklearn import metrics
 # Load the dataset from a CSV file#
 
 dataset = pd.read_csv(r'../../Data/westminster.csv')
-feature_cols = ['Week', 'Reg', 'Campus_Lecture_attendance', 'Module_A_deadlines',
-                'Module_B_deadlines', 'Module_C_deadlines', 'L_timeslot 9-11', 'L_timeslot 11-13', 'L_timeslot 14-16']
+feature_cols = ['Time','L_timeslot 9-11']
 # need to select only relevant labels
 # Select the relevant features
 
