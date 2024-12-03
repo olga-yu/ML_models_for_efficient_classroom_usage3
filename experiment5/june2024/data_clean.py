@@ -1,5 +1,5 @@
 import pandas as pd
-m,m,
+
 clean_data = pd.read_csv('Humidity-data_Motion_Temperature_9-13.csv')
 clean_data2 = pd.read_csv('Humidity-data_Motion_Temperature_14-18.csv')
 
