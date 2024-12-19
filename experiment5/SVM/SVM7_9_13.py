@@ -34,7 +34,7 @@ y_pred = svm.predict(X_test)
 plt.scatter(y_test, y_pred)
 plt.xlabel('Actual attendance')
 plt.ylabel('Predicted attendance')
-plt.title('SVM Regression: Attendance')
+plt.title('SVM Regression: Attendance, 9:00-14:00')
 plt.show()
 
 # Calculate RMSE (Root Mean Squared Error)
