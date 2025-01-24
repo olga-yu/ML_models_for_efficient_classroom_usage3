@@ -13,18 +13,18 @@ from sklearn.preprocessing import MinMaxScaler
 
 le = LabelEncoder()
 
-df = pd.read_csv(r'..\Data\output_lecture_seminar_processed3.csv', parse_dates=['date'])
+df = pd.read_csv(r'../data/output_9_18_minutes.csv')
 #################################
-df['date'] = pd.to_datetime(df['date'])
-df['year'] = df['date'].dt.year
-df['month'] = df['date'].dt.month
-df['day'] = df['date'].dt.day
-scaler = MinMaxScaler()
-time_components = ['year', 'month', 'day']
-df[time_components] = scaler.fit_transform(df[time_components])
+# df['Time'] = pd.to_datetime(df['Time'])
+# df['Month'] = df['ate'].dt.month
+# df['Year'] = df['date'].dt.year
+# df['day'] = df['date'].dt.day
+# scaler = MinMaxScaler()
+# time_components = ['year', 'month', 'day']
+# df[time_components] = scaler.fit_transform(df[time_components])
 
 ###################################
-data_input = df.drop(['Unnamed: 0', 'year', 'date','room_name', 'status', 'year','attendance', 'attendance_by_class', 'date-year', 'date-month', 'date-day','normalized_attendance','class_type_new'], axis=1)  #
+data_input = df.drop(['Time', 'sensor_mo.mean','Minute', 'Minutes_Past_Midnight', 'Extracted_Time'], axis=1)  #
 
 print("after drop shape and head")
 print(data_input.head)
@@ -32,7 +32,7 @@ print("Data input")
 print(data_input.shape)
 
 print("data_output")
-data_output = df[['normalized_attendance']].T
+data_output = df[['sensor_mo.mean']].T
 print(data_output.shape)
 
 class NeuralNetwork():
@@ -52,6 +52,8 @@ class NeuralNetwork():
 
     def train(self, training_inputs, training_outputs, training_iterations):
         # training the model to make accurate predictions while adjusting weights continually
+
+
         for iteration in range(training_iterations):
             # siphon the training data via  the neuron
             output = self.think(training_inputs)
@@ -82,7 +84,7 @@ if __name__ == "__main__":
     training_outputs = np.array(data_output).T
     print("training output")
     # training taking place
-    neural_network.train(training_inputs, training_outputs, 1500)
+    neural_network.train(training_inputs, training_outputs,150)
     # user_input_one = str(input("P1: "))
     # user_input_two = str(input("P2: "))
     # user_input_three = str(input("P3: "))
@@ -101,40 +103,32 @@ if __name__ == "__main__":
     # user_input_fourteen = str(input("SA2: "))
 
 
-    with open(r'..\Data\output_lecture_seminar_processed3.csv') as csvfile:  # Testing Input Data
+    with open(r'../data/processed_output_9_18.csv') as csvfile:  # Testing Input Data
         reader = csv.DictReader(csvfile)
         for row in reader:
-            class_type = int(row['class_type'])
-            faculty = int(row['faculty'])
-            school = int(row['school'])
-            enrollment = int(row['enrollment'])
-            class_duration = int(row['class_duration'])  # time variable
-            degree = int(row['degree'])
-            status = int(row['status'])
-            joint = int(row['joint'])
-            week = int(row['week'])
-            day = int(row['day'])
-            time_of_day = int(row['time_of_day'])
+
+            month = int(row['Month'])
+            week = int(row['Year'])
+            hour = int(row['Hour'])
+            time_of_day = int(row['TimeOfDay'])
+            weekDay = int(row['WeekDay'])
+            semester = int(row['Semester'])
 
 
 print("Attributes predicting attendance")
 
-print("Class type(lecture/laboratory/tutorial)*: ", class_type, )
-print("Course is combined or with other courses or not*", joint, )
-print("Faculty*: ", faculty, )
-print("Enrollment*", enrollment, )
-print("School* ", school, )
-print("Degree* ", degree, )
-print("Status* (open or full) ", status, )
-print("Time of the day: ", time_of_day, )
-print("Day", day, )
-print("Week ", week, )
-print("Enrollment", enrollment)
+print("Month*: ", month, )
+print("Year*", week, )
+print("Hour*: ", hour, )
+print("TimeOfDay*", time_of_day, )
+print("WeekDay* ", weekDay, )
+print("Semester* ", semester, )
+
 
 final_result = neural_network.think(np.array(
-    [class_type, faculty, school, enrollment, class_duration, degree, class_type, joint, week, day,  time_of_day
+    [month, week, hour, time_of_day, weekDay, semester
      ])),
-# 11 inputs listed above
+# 6 inputs listed above
 
 
 final_result = np.round(final_result, 5)

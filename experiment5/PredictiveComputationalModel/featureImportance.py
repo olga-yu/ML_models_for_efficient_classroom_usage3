@@ -1,25 +1,57 @@
-#NOT UPDATED
-# Feature Importance
-from pandas import read_csv
+from pandas import read_csv, concat
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import ExtraTreesRegressor
-from single_lstms.variables import testing_set_size
+from sklearn.ensemble import ExtraTreesClassifier
 from matplotlib import pyplot as plt
 
-# load the iris datasets
-training_data_cols = read_csv('combined_output.csv').columns.values
-training_data_cols = np.array(training_data_cols[0:len(training_data_cols) - 1].tolist())
+#df = pd.read_csv(r'../data/output_14_18_7.csv')
+df = pd.read_csv(r'../data/output_9_13_7.csv')
 
-training_data = pd.read_csv('combined_output.csv', header=0).values
-training_data = training_data[:, :-1]
+df.fillna(0, inplace=True)
+df = df.drop('Extracted_Time', axis=1)
+df = df.drop('User_sensor_mo.mean', axis=1)
 
-training_output = read_csv('Processed_Input_Data_FTSE100_1985_21.csv', header=0, index_col=0).values
-training_output = training_output[len(training_output) - testing_set_size:, 0]
-# fit an Extra Trees model to the data
-model = ExtraTreesRegressor(n_estimators=100)
+
+###############333
+'''
+# Select the relevant features
+feature_cols = ['week',  'school',  'enrollment', ]
+
+# Extract the features and target variable
+X = df[feature_cols]
+y = df['normalized_attendance2'] # this is classified normalized attendance, normalized attendance is room_attendance/course_enrollment
+##################3333
+
+training_data = df.drop('Class',axis=1)
+training_output = df['Class']
+training_data_cols = np.array(df.drop('Class',axis=1).columns.values.tolist())
+'''
+training_data = df.drop('Time', axis=1)
+
+training_output = df['sensor_mo.mean']
+training_data_cols = np.array(df.drop('sensor_mo.mean',axis=1).columns.values.tolist())
+
+# Check the shape of your data and target variable
+print(training_data.shape)  # Should match the number of samples and features
+print(training_output.shape)  # Should match the number of samples
+
+# Check the types of your columns to ensure they are numerical
+print(training_data.dtypes)
+
+# Check for missing values or non-numeric columns
+print(training_data.isnull().sum())  # Ensure there are no missing values in your features
+print(training_output.isnull().sum())  # Ensure there are no missing values in your target
+
+
+
+# Fit an Extra Trees model to the data
+model = ExtraTreesClassifier()
 model.fit(training_data, training_output)
-# display the relative importance of each attribute
+
+# Display the relative importance of each attribute
+sorted_idx = model.feature_importances_.argsort()
+
+print(model.feature_importances_)
 weights = np.array(model.feature_importances_)
 training_data_cols_matrix = np.expand_dims(training_data_cols, axis=1)
 weights = np.expand_dims(weights, axis=1)
@@ -28,7 +60,7 @@ weights = np.expand_dims(weights, axis=1)
 table = np.concatenate([training_data_cols_matrix, weights], axis=1)
 table = pd.DataFrame(table)
 table.columns = ['Attribute', 'Weights']
-table.to_csv('weights_importance_uc2.csv', index=False)
+table.to_csv('weights_importance_uc1.csv', index=False)
 print(table)
 
 # Plot output
@@ -39,5 +71,5 @@ plt.rcParams.update({'font.size': 14})
 sorted_idx = model.feature_importances_.argsort()
 plt.barh(training_data_cols[sorted_idx], model.feature_importances_[sorted_idx], color='green')
 plt.xlabel("Random Forest Feature Importance")
-plt.savefig('RFFI_UC2.png', dpi=1080, format='png')
+plt.savefig('RFFI_UC1.png', dpi=1080, format='png')
 plt.show()
